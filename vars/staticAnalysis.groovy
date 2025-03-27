@@ -2,7 +2,10 @@ def call(boolean abortPipeline = false) {
     timeout(time: 5, unit: 'MINUTES') {
         script {
             echo "Ejecución de las pruebas de calidad de código"
-            def branchName = env.BRANCH_NAME ?: 'unknown'
+            def branchName = env.BRANCH_NAME
+            if (!branchName) {
+                branchName = sh(script: 'git rev-parse --abbrev-ref HEAD', returnStdout: true).trim()
+            }
             echo "Nombre de la rama: ${branchName}"
             def qualityGateResult = "PASSED"
             if (abortPipeline || branchName == 'master' || branchName.startsWith('hotfix')) {
