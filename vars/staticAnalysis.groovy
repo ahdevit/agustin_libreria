@@ -3,8 +3,8 @@ def call(boolean abortPipeline = false) {
         script {
             echo "Ejecución de las pruebas de calidad de código"
             def branchName = env.BRANCH_NAME
-            if (!branchName) {
-                branchName = sh(script: 'git rev-parse --abbrev-ref HEAD', returnStdout: true).trim()
+            if (!branchName || branchName == 'HEAD') {
+                branchName = sh(script: 'git symbolic-ref --short HEAD || echo "detached"', returnStdout: true).trim()
             }
             echo "Nombre de la rama: ${branchName}"
             def qualityGateResult = "PASSED"
